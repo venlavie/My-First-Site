@@ -1,0 +1,50 @@
+
+{% extends "applikaatio/base.html" %}
+{% block content %}
+    <h1>Find matches!</h1>
+    <small class="text-muted">Football data provided by the Football-Data.org API</small>
+    <br>
+    <form method="GET">
+        <small> Input teams id-number below. Check the id-list on the right! </small>
+        {{ form.as_p }}
+        <button class="btn btn-outline-info" type="submit">Search matches</button> 
+    </form>
+
+    
+    <br>
+    {% if search_result %}
+        {% if search_result.success %}
+            <h4> {{ search_result.count }} matches found </h4>
+            {% for match in search_result.matches %}
+                <article class="content-section">
+                    <div class="media-body">
+                        <div class="article-metadata">
+                            {% if match.status == "FINISHED" %}
+                                <a><font color="red">  {{match.status}} </font></a>
+                            {% endif %}
+                            {% if match.status == "SCHEDULED" %}
+                                <a><font color="green">  {{match.status}} </font></a>
+                            {% endif %}
+                            <a class="mr-2", type="date">{{match.utcDate}}</a>
+                        </div>
+                        <h2><a class="article-title">
+                            {% if match.score.winner == "HOME_TEAM" %}
+                                <font color="green"> {{match.homeTeam.name}} </font> vs. {{match.awayTeam.name}}
+                            {% elif match.score.winner == "AWAY_TEAM" %}
+                                {{match.homeTeam.name}} vs. <font color="green"> {{match.awayTeam.name}} </font>
+                            {% else %}
+                                {{match.homeTeam.name}} vs. {{match.awayTeam.name}}
+                            {% endif %}           
+                        </a></h2>
+                        <p class="article-content">{{ match.competition.name }}</p>
+                        <p class="article-content"> <big> {{ match.score.fullTime.homeTeam }} - {{ match.score.fullTime.awayTeam }} </big></p>
+                    </div>
+                </article>
+
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+
+
+    
+{% endblock content %}
